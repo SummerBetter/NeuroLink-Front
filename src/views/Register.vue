@@ -10,7 +10,7 @@
     <div class="register-card">
       <div class="card-header">
         <div class="logo">
-          <div class="logo-icon">🧠</div>
+          <div class="logo-icon">🤖</div>
           <h1>NeuroLink</h1>
         </div>
         <p class="subtitle">创建您的账户</p>

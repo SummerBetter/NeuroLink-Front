@@ -106,16 +106,16 @@ html, body, #app {
 * {
   box-sizing: border-box !important;
 }
-.dashboard-layout,
-.el-container,
-.el-header,
-.el-aside,
-.el-main {
-  height: 100%;
-  min-height: 0;
-}
 .dashboard-layout {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.el-container {
+  flex: 1 1 0;
+  display: flex;
+  min-height: 0;
+  height: 100%;
 }
 .top-header {
   display: flex;
@@ -131,6 +131,7 @@ html, body, #app {
   left: 0;
   top: 0;
   flex-shrink: 0;
+  justify-content: space-between;
 }
 .side-nav {
   background: #f7f9fb;
@@ -140,7 +141,7 @@ html, body, #app {
   align-items: center;
   padding-top: 18px;
   height: 100%;
-  min-height: 0;
+  min-height: 100%;
   justify-content: space-between;
 }
 .nav-list {
@@ -188,11 +189,13 @@ html, body, #app {
   font-size: 1.5rem;
   font-weight: 700;
   margin-right: 32px;
+  margin-left: -12px;
 }
 .logo-icon {
   font-size: 2.1rem;
   margin-right: 8px;
   animation: pulse 2s infinite;
+  margin-left: 2px;
 }
 .logo-text {
   background: linear-gradient(135deg, #667eea, #764ba2);
@@ -206,8 +209,11 @@ html, body, #app {
 }
 .search-bar {
   flex: 1;
-  margin: 0 32px 0 0;
+  margin: 0 auto;
   max-width: 420px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .user-info {
   color: #666;
@@ -215,17 +221,20 @@ html, body, #app {
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-left: auto;
 }
 .el-main.main-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  height: 100%;
-  min-height: 0;
+  width: 100%;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 0;
   overflow: auto;
+  flex: 1 1 0;
+  height: 100%;
+  min-height: 100%;
 }
 .system-intro {
   position: relative;
@@ -233,8 +242,9 @@ html, body, #app {
   border-radius: 24px;
   box-shadow: 0 8px 40px 0 #a084ee22;
   padding: 32px 18px 28px 18px;
-  max-width: 900px;
-  width: 100%;
+  max-width: 2000px;
+  width: 80%;
+  height: 80%;
   margin: 40px 0 40px 0;
   text-align: center;
   z-index: 1;

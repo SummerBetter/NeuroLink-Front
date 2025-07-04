@@ -15,12 +15,16 @@
   box-sizing: border-box;
 }
 
+html, body, #app {
+  height: 100%;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f5f5f5;
 }
 
 #app {
-  min-height: 100vh;
+  height: 100vh;
 }
 </style> 
