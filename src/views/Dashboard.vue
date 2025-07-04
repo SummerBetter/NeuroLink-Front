@@ -1,59 +1,59 @@
 <template>
-  <div class="dashboard-container">
+  <el-container class="dashboard-layout">
+    <!-- 顶部导航栏，横向铺满 -->
+    <el-header class="top-header">
+      <div class="logo">
+        <span class="logo-icon">🤖</span>
+        <span class="logo-text">NeuroLink</span>
+      </div>
+      <el-input class="search-bar" placeholder="搜索平台内容..." clearable />
+      <div class="user-info">
+        欢迎，{{ userInfo?.username }}
+        <el-button type="text" @click="handleLogout">退出登录</el-button>
+      </div>
+    </el-header>
     <el-container>
-      <el-header class="header">
-        <div class="header-content">
-          <div class="logo">
-            <div class="logo-icon">🤖</div>
-            <h2>NeuroLink</h2>
-          </div>
-          <div class="user-info">
-            <span>欢迎，{{ userInfo?.username }}</span>
-            <el-button type="text" @click="handleLogout">退出登录</el-button>
+      <!-- 左侧导航栏 -->
+      <el-aside width="90px" class="side-nav">
+        <div class="nav-list">
+          <div
+            v-for="item in modules"
+            :key="item.key"
+            :class="['nav-item', {active: currentModule === item.key}]"
+            @click="selectModule(item.key)"
+          >
+            <div class="nav-icon">{{ item.icon }}</div>
+            <div class="nav-label">{{ item.label }}</div>
           </div>
         </div>
-      </el-header>
-      
+        <div class="nav-home"
+          :class="['nav-item', {active: currentModule === ''}]"
+          @click="selectModule('')"
+        >
+          <div class="nav-icon">🏠</div>
+          <div class="nav-label">主页</div>
+        </div>
+      </el-aside>
       <el-main class="main-content">
-        <div class="welcome-section">
-          <h1>欢迎来到 一体化AI平台</h1>
-          <p>您已成功登录系统，可以开始使用各项功能。</p>
+        <div v-if="!currentModule" class="system-intro">
+          <div class="intro-bg-glow"></div>
+          <h1>欢迎来到 <span class="intro-gradient">NeuroLink 一体化AI平台</span></h1>
+          <p class="intro-lead">让智能触手可及，赋能每一位用户</p>
+          <ul class="intro-list">
+            <li>🚀 融合多种AI能力，助力高效办公与创新</li>
+            <li>🔒 数据安全与隐私保护，值得信赖</li>
+            <li>💬 智能对话、知识管理、AI工具一站式体验</li>
+            <li>🛒 丰富AI资源与应用，持续扩展生态</li>
+          </ul>
+          <div class="intro-footer">开启智能新时代，尽在 NeuroLink！</div>
         </div>
-        
-        <div class="stats-grid">
-          <el-card class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon">📊</div>
-              <div class="stat-info">
-                <h3>系统状态</h3>
-                <p>运行正常</p>
-              </div>
-            </div>
-          </el-card>
-          
-          <el-card class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon">👤</div>
-              <div class="stat-info">
-                <h3>用户信息</h3>
-                <p>{{ userInfo?.email }}</p>
-              </div>
-            </div>
-          </el-card>
-          
-          <el-card class="stat-card">
-            <div class="stat-content">
-              <div class="stat-icon">🔐</div>
-              <div class="stat-info">
-                <h3>安全状态</h3>
-                <p>已认证</p>
-              </div>
-            </div>
-          </el-card>
+        <div v-else class="module-content">
+          <h2>{{ getModuleLabel(currentModule) }}</h2>
+          <p>模块内容敬请期待...</p>
         </div>
       </el-main>
     </el-container>
-  </div>
+  </el-container>
 </template>
 
 <script setup>
@@ -63,6 +63,14 @@ import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const userInfo = ref(null)
+const currentModule = ref('')
+
+const modules = [
+  { key: 'info', icon: '📁', label: '信息管理' },
+  { key: 'ai', icon: '🤖', label: 'AI赋能' },
+  { key: 'chat', icon: '💬', label: 'NeuroChat' },
+  { key: 'store', icon: '🛒', label: 'NeuroStore' },
+]
 
 onMounted(() => {
   const storedUserInfo = localStorage.getItem('userInfo')
@@ -70,6 +78,15 @@ onMounted(() => {
     userInfo.value = JSON.parse(storedUserInfo)
   }
 })
+
+const selectModule = (key) => {
+  currentModule.value = key
+}
+
+const getModuleLabel = (key) => {
+  const found = modules.find(m => m.key === key)
+  return found ? found.label : ''
+}
 
 const handleLogout = () => {
   localStorage.removeItem('token')
@@ -80,153 +97,214 @@ const handleLogout = () => {
 </script>
 
 <style scoped>
-.dashboard-container {
-  min-height: 100vh;
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+* {
+  box-sizing: border-box !important;
+}
+.dashboard-layout,
+.el-container,
+.el-header,
+.el-aside,
+.el-main {
+  height: 100%;
+  min-height: 0;
+}
+.dashboard-layout {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
-
-.header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-content {
+.top-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+  height: 64px;
+  background: rgba(255,255,255,0.95);
+  border-bottom: 1.5px solid #e0e6ed;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  padding: 0 32px;
+  z-index: 10;
+  width: 100%;
+  position: relative;
+  left: 0;
+  top: 0;
+  flex-shrink: 0;
 }
-
+.side-nav {
+  background: #f7f9fb;
+  border-right: 1.5px solid #e0e6ed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 18px;
+  height: 100%;
+  min-height: 0;
+  justify-content: space-between;
+}
+.nav-list {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.nav-item {
+  width: 70px;
+  height: 90px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  font-weight: 500;
+  color: #555;
+}
+.nav-item.active, .nav-item:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+  box-shadow: 0 2px 12px 0 #a084ee22;
+  color: #764ba2;
+}
+.nav-icon {
+  font-size: 2.2rem;
+  margin-bottom: 6px;
+}
+.nav-label {
+  font-size: 0.98rem;
+  text-align: center;
+  word-break: keep-all;
+}
+.nav-home {
+  margin-top: auto;
+  margin-bottom: 32px;
+}
 .logo {
   display: flex;
   align-items: center;
-}
-
-.logo-icon {
-  font-size: 2rem;
-  margin-right: 10px;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.logo h2 {
-  margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
+  margin-right: 32px;
+}
+.logo-icon {
+  font-size: 2.1rem;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+.logo-text {
   background: linear-gradient(135deg, #667eea, #764ba2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.search-bar {
+  flex: 1;
+  margin: 0 32px 0 0;
+  max-width: 420px;
+}
 .user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-info span {
-  color: #666;
-  font-weight: 500;
-}
-
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.welcome-section {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.welcome-section h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 10px;
-}
-
-.welcome-section p {
-  font-size: 1.2rem;
-  color: #666;
-  margin: 0;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 40px;
-}
-
-.stat-card {
-  border-radius: 15px;
-  border: none;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.stat-content {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-}
-
-.stat-icon {
-  font-size: 3rem;
-  margin-right: 20px;
-}
-
-.stat-info h3 {
-  margin: 0 0 5px 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.stat-info p {
-  margin: 0;
   color: #666;
   font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 10px;
+.el-main.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  min-height: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
+  overflow: auto;
+}
+.system-intro {
+  position: relative;
+  background: rgba(255,255,255,0.92);
+  border-radius: 24px;
+  box-shadow: 0 8px 40px 0 #a084ee22;
+  padding: 32px 18px 28px 18px;
+  max-width: 900px;
+  width: 100%;
+  margin: 40px 0 40px 0;
+  text-align: center;
+  z-index: 1;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.intro-bg-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 340px;
+  height: 180px;
+  background: radial-gradient(ellipse at center, #a084ee33 0%, #fff0 80%);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+.system-intro h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  letter-spacing: 1.5px;
+}
+.intro-gradient {
+  background: linear-gradient(90deg, #667eea, #a084ee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.intro-lead {
+  font-size: 1.2rem;
+  color: #764ba2;
+  margin-bottom: 32px;
+  font-weight: 600;
+}
+.intro-list {
+  text-align: left;
+  margin: 0 auto 32px auto;
+  padding: 0 0 0 0.5em;
+  max-width: 600px;
+  color: #555;
+  font-size: 1.08rem;
+  line-height: 2.1;
+}
+.intro-footer {
+  font-size: 1.12rem;
+  color: #667eea;
+  font-weight: 700;
+  margin-top: 18px;
+  letter-spacing: 1.2px;
+}
+.module-content {
+  width: 100%;
+  text-align: center;
+  margin-top: 80px;
+}
+@media (max-width: 900px) {
+  .system-intro {
+    max-width: 98vw;
+    padding: 24px 4px 18px 4px;
+    margin: 20px 0 20px 0;
   }
-  
-  .welcome-section h1 {
-    font-size: 2rem;
+  .system-intro h1 {
+    font-size: 1.3rem;
   }
-  
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .intro-lead {
+    font-size: 1.05rem;
+  }
+  .intro-list {
+    font-size: 1rem;
   }
 }
 </style> 
